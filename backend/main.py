@@ -1,6 +1,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials as SAC
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import key
 
@@ -22,8 +23,22 @@ class Info(BaseModel):
     id: int
     data: list
 
-
-@app.post("/addNewEvent")
+@app.post("/addNewEvents")
 def getInformation(info: Info):
-    Sheets.append_row(info.data)
-    return {"status": "SUCCESS", "data": info}
+    if info.data[1] and info.data[2]:
+        Sheets.append_row(info.data)
+        return {"status": "SUCCESS", "data": info}
+    return {"status": "ERROR", "data": info}
+
+# accept the frontend request
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
