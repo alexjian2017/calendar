@@ -1,3 +1,4 @@
 env
+__pycache__
 calendar.json
 key.py
